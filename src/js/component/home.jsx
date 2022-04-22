@@ -1,24 +1,48 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 
-//include images into your bundle
-import rigoImage from "../../img/rigo-baby.jpg";
+//Importing Components
+import { Form } from "./Form.jsx";
+import { Todo } from "./Todo.jsx";
 
 //create your first component
 const Home = () => {
+	const [input, setInput] = useState("");
+	const [todos, setTodos] = useState([]);
+
+	const APIURL = "https://assets.breatheco.de/apis/fake/todos/user/chris";
+	const getSampleTask = () => {
+		fetch(APIURL)
+			.then((response) => response.json())
+			.then((newTodo) => setTodos(newTodo))
+			.then((response) => console.log(response));
+	};
+
+	const updateURL = () => {
+		fetch(APIURL, {
+			method: "PUT",
+			body: JSON.stringify(todos),
+			headers: {
+				"Content-Type": "application/json",
+			},
+		}).then((response) => response.json());
+	};
+	useEffect(() => {
+		getSampleTask();
+	}, []);
 	return (
 		<div>
-			<h1 className="text-center mt-5">Hello Rigo!</h1>
-			<p>
-				<img src={rigoImage} />
-			</p>
-			<a href="#" className="btn btn-success">
-				If you see this green button... bootstrap is working...
-			</a>
-			<p>
-				Made by{" "}
-				<a href="http://www.4geeksacademy.com">4Geeks Academy</a>, with
-				love!
-			</p>
+			<header>
+				<h1>Christian's Todo List</h1>
+			</header>
+			<div>
+				<Form
+					input={input}
+					todos={todos}
+					setTodos={setTodos}
+					setInput={setInput}
+				/>
+				<Todo todos={todos} setTodos={setTodos} />
+			</div>
 		</div>
 	);
 };
